@@ -1,0 +1,41 @@
+
+# NEXUS AI
+
+Plataforma de inteligência artificial para criação de sites e experiências interativas.
+
+## Funcionalidades iniciais
+
+- Interface NEXUS BUILDER.
+- Geração de projetos web com IA.
+- Pré-visualização de projetos.
+- Edição de HTML, CSS e JavaScript.
+- Estrutura para expansão com jogos interativos.
+
+## Tecnologias
+
+- HTML
+- CSS
+- JavaScript
+- Node.js
+- Express
+- OpenAI API
+
+## Instalação
+
+Instale as dependências:
+
+npm install
+
+Configure as variáveis de ambiente usando o arquivo .env.example como referência.
+
+Inicie o servidor:
+
+npm start
+
+## Segurança
+
+Nunca coloque chaves de API no GitHub ou no navegador.
+
+## Desenvolvimento
+
+Projeto em construção. Nem todas as funcionalidades estão implementadas.
