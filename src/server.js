@@ -29,6 +29,81 @@ app.use("/api", rateLimit({
   limit: 20
 }));
 
+// CONEXÃO COM A IA
+function getAI() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error("IA não configurada no servidor.");
+  }
+
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY
+  });
+}
+
+// CHAT DO NEXUS AI
+app.post("/api/chat", async (req, res) => {
+  try {
+    const messages = req.body.messages;
+
+    if (
+      !Array.isArray(messages) ||
+      messages.length === 0 ||
+      messages.length > 20
+    ) {
+      return res.status(400).json({
+        error: "Histórico de conversa inválido."
+      });
+    }
+
+    const validMessages = messages.every(message =>
+      message &&
+      ["user", "assistant"].includes(message.role) &&
+      typeof message.content === "string" &&
+      message.content.trim().length > 0 &&
+      message.content.length <= 4000
+    );
+
+    if (!validMessages || messages[messages.length - 1].role !== "user") {
+      return res.status(400).json({
+        error: "Mensagens inválidas."
+      });
+    }
+
+    const ai = getAI();
+
+    const result = await ai.responses.create({
+      model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
+      instructions: `
+        Você é o NEXUS AI.
+        Sua personalidade é inteligente, criativa,
+        estratégica, profissional e divertida.
+        Responda em português brasileiro.
+        Ajude a criar sites, jogos e projetos.
+        Explique programação de forma simples.
+        Seja honesto sobre suas capacidades.
+      `,
+      input: messages.map(message => ({
+        role: message.role,
+        content: message.content
+      }))
+    });
+
+    res.json({
+      reply: result.output_text || "Não consegui gerar uma resposta."
+    });
+
+  } catch (error) {
+    console.error("Erro no chat:", error.message);
+
+    res.status(
+      error.message.includes("não configurada") ? 503 : 500
+    ).json({
+      error: "Não foi possível conectar ao NEXUS AI."
+    });
+  }
+});
+
+// GERADOR DE SITES
 app.post("/api/generate", async (req, res) => {
   try {
     if (!process.env.OPENAI_API_KEY) {
@@ -45,18 +120,15 @@ app.post("/api/generate", async (req, res) => {
       });
     }
 
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY
-    });
+    const ai = getAI();
 
-    const result = await openai.responses.create({
+    const result = await ai.responses.create({
       model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
       instructions: "Você é o NEXUS BUILDER. Gere projetos web funcionais. Responda somente JSON válido com as propriedades html, css e js. Não use Markdown. Não inclua scripts externos.",
       input: prompt
     });
 
-    const text = result.output_text;
-    const project = JSON.parse(text);
+    const project = JSON.parse(result.output_text);
 
     if (
       typeof project.html !== "string" ||
