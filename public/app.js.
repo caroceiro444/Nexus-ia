@@ -1,0 +1,55 @@
+
+const tabs = document.querySelectorAll("[data-tab]");
+const panels = document.querySelectorAll(".panel");
+
+tabs.forEach((button) => {
+  button.addEventListener("click", () => {
+    panels.forEach(panel => panel.hidden = true);
+
+    const selected = document.getElementById(button.dataset.tab);
+    if (selected) selected.hidden = false;
+  });
+});
+
+const generateButton = document.getElementById("generate");
+const promptInput = document.getElementById("prompt");
+const preview = document.getElementById("preview");
+
+generateButton.addEventListener("click", async () => {
+  const prompt = promptInput.value.trim();
+
+  if (!prompt) {
+    alert("Descreva o projeto que deseja criar!");
+    return;
+  }
+
+  generateButton.disabled = true;
+  generateButton.textContent = "Criando...";
+
+  try {
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
+    });
+
+    if (!response.ok) {
+      throw new Error("Não foi possível gerar o projeto.");
+    }
+
+    const project = await response.json();
+
+    preview.srcdoc = `
+      ${project.html || ""}
+      <style>${project.css || ""}</style>
+      <script>${project.js || ""}<\/script>
+    `;
+  } catch (error) {
+    alert(error.message + " Verifique se o servidor está funcionando.");
+  } finally {
+    generateButton.disabled = false;
+    generateButton.textContent = "Gerar projeto";
+  }
+});
