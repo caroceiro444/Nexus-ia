@@ -1,1 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS AI Builder</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>NEXUS AI</h1>
+    <span>BUILDER 2.0</span>
+  </header>
 
+  <main>
+    <section class="welcome">
+      <h2>Crie qualquer projeto com IA</h2>
+      <p>Transforme suas ideias em sites e experiências interativas.</p>
+    </section>
+
+    <nav class="tabs">
+      <button data-tab="builder">Builder</button>
+      <button data-tab="chat">Chat IA</button>
+      <button data-tab="games">Games</button>
+    </nav>
+
+    <section id="builder" class="panel">
+      <h2>Novo projeto</h2>
+      <textarea id="prompt" placeholder="Descreva o site ou jogo que deseja criar..."></textarea>
+      <button id="generate">Gerar projeto</button>
+      <h3>Pré-visualização</h3>
+      <iframe id="preview" sandbox="allow-scripts"></iframe>
+    </section>
+
+    <section id="chat" class="panel" hidden>
+      <h2>Chat IA</h2>
+      <p>Área de conversa em desenvolvimento.</p>
+    </section>
+
+    <section id="games" class="panel" hidden>
+      <h2>Jogos</h2>
+      <p>Área de jogos em desenvolvimento.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
