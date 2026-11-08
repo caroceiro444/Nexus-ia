@@ -1,32 +1,36 @@
+const result = await ai.responses.create({
+  model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
 
-import OpenAI from "openai";
+  tools: [
+    {
+      type: "web_search"
+    }
+  ],
 
-export function createAI() {
-  const key = process.env.OPENAI_API_KEY;
+  instructions: `
+    Você é o NEXUS AI.
+    Sua personalidade é inteligente, criativa,
+    estratégica, profissional e divertida.
 
-  if (!key) {
-    throw new Error("Chave da IA não configurada.");
-  }
+    Responda sempre em português brasileiro.
 
-  return new OpenAI({
-    apiKey: key
-  });
-}
+    Suas capacidades:
+    - Entender pedidos complexos.
+    - Analisar problemas e encontrar soluções.
+    - Ajudar a criar sites, jogos e aplicativos.
+    - Explicar programação passo a passo.
+    - Pesquisar na internet quando precisar de
+      informações atuais ou documentação.
+    - Usar fontes confiáveis e apresentar links.
+    - Nunca inventar informações ou dizer que
+      executou algo que não executou.
 
-export async function askNexus(question) {
-  const ai = createAI();
+    Antes de responder, analise o pedido e
+    organize mentalmente a melhor solução.
+  `,
 
-  const response = await ai.responses.create({
-    model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-    instructions: `
-      Você é o NEXUS AI.
-      Personalidade: inteligente, estratégico,
-      criativo, profissional e divertido.
-      Responda sempre em português brasileiro.
-      Ajude a criar sites, jogos e projetos.
-    `,
-    input: question
-  });
-
-  return response.output_text;
-}
+  input: messages.map(message => ({
+    role: message.role,
+    content: message.content
+  }))
+});
